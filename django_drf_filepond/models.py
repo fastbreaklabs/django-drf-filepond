@@ -188,18 +188,5 @@ def delete_temp_upload_file(sender, instance, **kwargs):
     # and that the file exists and is not a directory! Then we can delete it
     LOG.debug("*** post_delete signal handler called. Deleting file.")
     if instance.file:
-        if os.path.exists(instance.file.path) and os.path.isfile(instance.file.path):
-            os.remove(instance.file.path)
-
-    LOG.debug(
-        "*** post_delete <%s> - Value of DELETE_UPLOAD_TMP_DIRS: %s"
-        % (instance.upload_id, str(local_settings.DELETE_UPLOAD_TMP_DIRS))
-    )
-    if local_settings.DELETE_UPLOAD_TMP_DIRS:
-        file_dir = os.path.join(storage.location, instance.upload_id)
-        if os.path.exists(file_dir) and os.path.isdir(file_dir):
-            os.rmdir(file_dir)
-            LOG.debug(
-                "*** post_delete signal handler called. Deleting temp "
-                "dir that contained file."
-            )
+        if storage.exists(instance.file.name):
+            storage.delete(instance.file.name)
