@@ -23,6 +23,10 @@ class TemporaryS3Storage(S3Boto3Storage):
     bucket_name = "glave-temp"
 
 
+class PermanentS3Storage(S3Boto3Storage):
+    bucket_name = "glave-content"
+
+
 LOG = logging.getLogger(__name__)
 
 BASE_DIR = local_settings.BASE_DIR
@@ -63,7 +67,8 @@ class FilePondUploadSystemStorage(FileSystemStorage):
         super(FilePondUploadSystemStorage, self).__init__(**kwargs)
 
 
-storage = TemporaryS3Storage()
+temp_storage = TemporaryS3Storage()
+permanent_storage = PermanentS3Storage()
 
 
 @deconstructible
@@ -123,7 +128,7 @@ class TemporaryUpload(models.Model):
     )
     # The unique ID used to store the file itself
     file_id = models.CharField(max_length=22, validators=[MinLengthValidator(22)])
-    file = models.FileField(storage=storage, upload_to=get_upload_path)
+    file = models.FileField(storage=temp_storage, upload_to=get_upload_path)
     upload_name = models.CharField(max_length=512)
     uploaded = models.DateTimeField(auto_now_add=True)
     upload_type = models.CharField(max_length=1, choices=UPLOAD_TYPE_CHOICES)
@@ -166,7 +171,7 @@ class StoredUpload(models.Model):
     )
     # The file name and path (relative to the base file store directory
     # as set by DJANGO_DRF_FILEPOND_FILE_STORE_PATH).
-    file = models.FileField(storage=DrfFilePondStoredStorage(), max_length=2048)
+    file = models.FileField(storage=permanent_storage, max_length=2048)
     uploaded = models.DateTimeField()
     stored = models.DateTimeField(auto_now_add=True)
     uploaded_by = models.ForeignKey(
@@ -188,5 +193,5 @@ def delete_temp_upload_file(sender, instance, **kwargs):
     # and that the file exists and is not a directory! Then we can delete it
     LOG.debug("*** post_delete signal handler called. Deleting file.")
     if instance.file:
-        if storage.exists(instance.file.name):
-            storage.delete(instance.file.name)
+        if temp_storage.exists(instance.file.name):
+            temp_storage.delete(instance.file.name)

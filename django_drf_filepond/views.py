@@ -21,7 +21,7 @@ from django.http.response import (
 )
 from django_drf_filepond.api import get_stored_upload, get_stored_upload_file_data
 from django_drf_filepond.exceptions import ConfigurationError
-from django_drf_filepond.models import TemporaryUpload, storage, StoredUpload
+from django_drf_filepond.models import TemporaryUpload, StoredUpload, temp_storage
 from django_drf_filepond.parsers import PlainTextParser, UploadChunkParser
 from django_drf_filepond.renderers import PlainTextRenderer
 from io import BytesIO
@@ -114,7 +114,7 @@ class ProcessView(APIView):
         # parameter that can be disabled to turn off this check if the
         # developer wishes?
         LOCAL_BASE_DIR = get_local_settings_base_dir()
-        if (not (storage.location).startswith(LOCAL_BASE_DIR)) and (
+        if (not (temp_storage.location).startswith(LOCAL_BASE_DIR)) and (
             LOCAL_BASE_DIR != os.path.dirname(django_drf_filepond.__file__)
         ):
             if not local_settings.ALLOW_EXTERNAL_UPLOAD_DIR:
@@ -126,7 +126,7 @@ class ProcessView(APIView):
         # Check that a relative path is not being used to store the
         # upload outside the specified UPLOAD_TMP directory.
         if not getattr(local_settings, "UPLOAD_TMP").startswith(
-            os.path.abspath(storage.location)
+            os.path.abspath(temp_storage.location)
         ):
             return Response(
                 "An invalid storage location has been " "specified.",
