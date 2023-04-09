@@ -52,7 +52,6 @@ target/
 .project
 .pydevproject
 .settings
-.vscode
 
 # Sphinx documentation files
 docs/_build/
@@ -62,3 +61,6 @@ docs/_build/
 # django-drf-filepond temp file uploads
 filepond_uploads
 
+temp_auto_push.bat
+temp_interactive_push.bat
+.gitignore
