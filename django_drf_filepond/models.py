@@ -177,13 +177,13 @@ class StoredUpload(models.Model):
     uploaded_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE
     )
-    JPEG_EXT = "jpeg"
-    JPG_EXT = "jpg"
-    PNG_EXT = "png"
-    HEIC_EXT = "heic"
-    MP4_EXT = "mp4"
-    WEBP_EXT = "webp"
-    WEBM_EXT = "webm"
+    JPEG_EXT = "image/jpeg"
+    JPG_EXT = "image/jpg"
+    PNG_EXT = "image/png"
+    HEIC_EXT = "image/heic"
+    MP4_EXT = "video/mp4"
+    WEBP_EXT = "image/webp"
+    WEBM_EXT = "video/webm"
     ALLOWED_FILE_TYPES = [
         (JPEG_EXT, JPEG_EXT),
         (JPG_EXT, JPG_EXT),
