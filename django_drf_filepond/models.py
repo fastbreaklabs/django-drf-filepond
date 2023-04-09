@@ -177,6 +177,25 @@ class StoredUpload(models.Model):
     uploaded_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE
     )
+    JPEG_EXT = "jpeg"
+    JPG_EXT = "jpg"
+    PNG_EXT = "png"
+    HEIC_EXT = "heic"
+    MP4_EXT = "mp4"
+    WEBP_EXT = "webp"
+    WEBM_EXT = "webm"
+    ALLOWED_FILE_TYPES = [
+        (JPEG_EXT, JPEG_EXT),
+        (JPG_EXT, JPG_EXT),
+        (PNG_EXT, PNG_EXT),
+        (HEIC_EXT, HEIC_EXT),
+        (MP4_EXT, MP4_EXT),
+        (WEBP_EXT, WEBP_EXT),
+        (WEBM_EXT, WEBM_EXT),
+    ]
+    file_type = models.TextField(
+        max_length=50, default="jpeg", choices=ALLOWED_FILE_TYPES
+    )
 
     def get_absolute_file_path(self):
         fsp = local_settings.FILE_STORE_PATH
